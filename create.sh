@@ -22,24 +22,34 @@ echo "Using ollama to generate output."
 ollama run qwen3-coder $PROMPT > $OUTPUT_PATH
 
 # Authenticate to github
+echo "Authenticating to Github."
 gh auth login --hostname github.com --with-token < ../github_token.txt
 
 # Create a new branch
+echo "Creating a new branch."
 git checkout -b "$FOLDER-$LINE"
 
 # Add updated items
+echo "Adding files to staging."
 git add .
 
 # Make commit
+echo "Making commit."
 git commit -m "Added $OUTPUT_PATH"
 
 # Push the commit
+echo "Pushing commit."
 git push --set-upstream origin $FOLDER-$LINE
 
 # Creating the pull request
+echo "Creating pull request."
 gh pr create --title "$FOLDER_$LINE ready for review" --body "Generating automatically from create.sh."
 
-# remove the first line
-#sed -i '1d' list.txt
+# Switch back to main branch
+git switch main
+
+# Remove the first line
+echo "Pruning list."
+sed -i '1d' $INPUT_FILE
 
 echo "Processing complete."
