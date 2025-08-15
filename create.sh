@@ -13,7 +13,7 @@ CLEAN_LINE=${LINE// /_}
 echo "Processing line: $LINE"
 
 # Create the prompt
-PROMPT="Show an example of $LINE algorithm in $LANGUAGE, in raw markdown."
+PROMPT="Show an example of $LINE algorithm in the $LANGUAGE programming language, in raw markdown."
 echo "Prompt: $PROMPT"
 
 # Generate ollama result
