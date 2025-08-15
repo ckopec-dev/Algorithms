@@ -1,4 +1,3 @@
-Adaptive Huffman coding
 Aho–Corasick algorithm
 Alpha–beta pruning
 Apriori algorithm

@@ -16,7 +16,7 @@ PROMPT="Show an example of $LINE algorithm in $LANGUAGE, in raw markdown."
 echo "Prompt: $PROMPT"
 
 # Generate ollama result
-OUTPUT_PATH="./$FOLDER/$LINE.md"
+OUTPUT_PATH="./$FOLDER/${LINE// /_}.md"
 echo "Output path: $OUTPUT_PATH"
 echo "Using ollama to generate output."
 ollama run qwen3-coder $PROMPT > $OUTPUT_PATH
