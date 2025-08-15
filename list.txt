@@ -1,4 +1,3 @@
-Alpha–beta pruning
 Apriori algorithm
 Arithmetic coding
 Arnoldi iteration
