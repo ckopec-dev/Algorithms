@@ -1,6 +1,6 @@
 #!/bin/bash
 
-echo "Reading first line from list."
+echo "Processing list."
 
 # Specify the input file
 INPUT_FILE="list.txt"
@@ -21,9 +21,22 @@ echo "Output path: $OUTPUT_PATH"
 echo "Using ollama to generate output."
 ollama run qwen3-coder $PROMPT > $OUTPUT_PATH
 
+# Authenticate to github
+gh auth login --hostname github.com --with-token < ../github_token.txt
 
+# Create a new branch
+git checkout -b "$FOLDER-$LINE"
 
+# Add updated items
+git add .
 
+# Make commit
+git commit -m "Added $OUTPUT_PATH"
+
+# Push the commit
+git push
+
+# gh pr create --title "Pull request title" --body "Pull request body"
 
 # remove the first line
 #sed -i '1d' list.txt
