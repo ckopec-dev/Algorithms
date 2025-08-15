@@ -25,6 +25,10 @@ ollama run qwen3-coder $PROMPT > $OUTPUT_PATH
 echo "Authenticating to Github."
 gh auth login --hostname github.com --with-token < ../github_token.txt
 
+# Get fresh pull
+echo "Pulling latest version."
+git pull
+
 # Create a new branch
 echo "Creating a new branch."
 git checkout -b "$FOLDER-$LINE"
