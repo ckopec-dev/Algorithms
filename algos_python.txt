@@ -1,4 +1,3 @@
-Arnoldi iteration
 Artificial bee colony algorithm
 AVL tree balancing algorithm
 Baby-step giant-step algorithm
