@@ -1,4 +1,3 @@
-Arithmetic coding
 Arnoldi iteration
 Artificial bee colony algorithm
 AVL tree balancing algorithm
