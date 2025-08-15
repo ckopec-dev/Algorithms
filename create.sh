@@ -9,6 +9,7 @@ FOLDER="Python"
 
 # Get first line from input
 LINE=$(head -n 1 $INPUT_FILE)
+CLEAN_LINE=${LINE// /_}
 echo "Processing line: $LINE"
 
 # Create the prompt
@@ -16,7 +17,7 @@ PROMPT="Show an example of $LINE algorithm in $LANGUAGE, in raw markdown."
 echo "Prompt: $PROMPT"
 
 # Generate ollama result
-OUTPUT_PATH="./$FOLDER/${LINE// /_}.md"
+OUTPUT_PATH="./$FOLDER/$CLEAN_LINE.md"
 echo "Output path: $OUTPUT_PATH"
 echo "Using ollama to generate output."
 ollama run qwen3-coder $PROMPT > $OUTPUT_PATH
@@ -43,7 +44,7 @@ git commit -m "Added $OUTPUT_PATH"
 
 # Push the commit
 echo "Pushing commit."
-git push --set-upstream origin $FOLDER-$LINE
+git push --set-upstream origin $FOLDER-$CLEAN_LINE
 
 # Creating the pull request
 echo "Creating pull request."
