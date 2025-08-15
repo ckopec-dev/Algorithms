@@ -3,7 +3,7 @@
 echo "Processing list."
 
 # Specify the input file
-INPUT_FILE="list.txt"
+INPUT_FILE=$1
 LANGUAGE="python"
 FOLDER="Python"
 
