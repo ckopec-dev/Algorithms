@@ -19,7 +19,7 @@ echo "Prompt: $PROMPT"
 OUTPUT_PATH="./$FOLDER/$LINE.md"
 echo "Output path: $OUTPUT_PATH"
 echo "Using ollama to generate output."
-#ollama run qwen3-coder $PROMPT > $OUTPUT_PATH
+ollama run qwen3-coder $PROMPT > $OUTPUT_PATH
 
 
 
