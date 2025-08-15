@@ -4,8 +4,8 @@ echo "Processing list."
 
 # Specify the input file
 INPUT_FILE=$1
-LANGUAGE="python"
-FOLDER="Python"
+LANGUAGE=$2
+FOLDER=$3
 
 # Get first line from input
 LINE=$(head -n 1 $INPUT_FILE)
