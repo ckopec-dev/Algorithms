@@ -34,9 +34,10 @@ git add .
 git commit -m "Added $OUTPUT_PATH"
 
 # Push the commit
-git push
+git push --set-upstream origin $FOLDER-$LINE
 
-# gh pr create --title "Pull request title" --body "Pull request body"
+# Creating the pull request
+gh pr create --title "$FOLDER_$LINE ready for review" --body "Generating automatically from create.sh."
 
 # remove the first line
 #sed -i '1d' list.txt
