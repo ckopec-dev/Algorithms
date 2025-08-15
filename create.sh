@@ -3,9 +3,9 @@
 echo "Processing list."
 
 # Specify the input file
-INPUT_FILE=$1
-LANGUAGE=$2
-FOLDER=$3
+INPUT_FILE="algos_$1.txt"
+LANGUAGE=$1
+FOLDER=$1
 
 # Get first line from input
 LINE=$(head -n 1 $INPUT_FILE)
