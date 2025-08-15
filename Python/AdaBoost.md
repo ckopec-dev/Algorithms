@@ -1,55 +1,59 @@
 # AdaBoost Algorithm Example in Python
 
-Here's a complete implementation of the AdaBoost algorithm from scratch using Python:
+## What is AdaBoost?
+
+AdaBoost (Adaptive Boosting) is a machine learning algorithm that combines multiple weak learners to create a strong learner. It works by iteratively training weak classifiers and adjusting the weights of misclassified samples.
+
+## Implementation Example
 
 ```python
 import numpy as np
 import matplotlib.pyplot as plt
-from sklearn.datasets import make_classification
 from sklearn.tree import DecisionTreeClassifier
+from sklearn.datasets import make_classification
+from sklearn.model_selection import train_test_split
 from sklearn.metrics import accuracy_score
 
 class AdaBoostClassifier:
-    def __init__(self, n_estimators=10, learning_rate=1.0):
+    def __init__(self, n_estimators=50, learning_rate=1.0):
         self.n_estimators = n_estimators
         self.learning_rate = learning_rate
-        self.stumps = []
-        self.alphas = []
+        self.models = []
+        self.model_weights = []
         
     def fit(self, X, y):
         # Initialize sample weights
         n_samples = X.shape[0]
-        weights = np.full(n_samples, 1.0 / n_samples)
+        weights = np.ones(n_samples) / n_samples
         
         for _ in range(self.n_estimators):
-            # Create a weak learner (decision stump - depth=1)
-            stump = DecisionTreeClassifier(max_depth=1)
-            stump.fit(X, y, sample_weight=weights)
+            # Create a weak learner (decision tree with depth 1)
+            weak_learner = DecisionTreeClassifier(max_depth=1)
+            weak_learner.fit(X, y, sample_weight=weights)
             
             # Make predictions
-            predictions = stump.predict(X)
+            predictions = weak_learner.predict(X)
             
             # Calculate error
-            error = np.sum(weights * (predictions != y))
+            error = np.sum(weights * (predictions != y)) / np.sum(weights)
             
-            # Calculate alpha (classifier weight)
-            alpha = self.learning_rate * (0.5 * np.log((1 - error) / (error + 1e-10)))
+            # Calculate model weight
+            model_weight = self.learning_rate * np.log((1 - error) / (error + 1e-10))
             
-            # Update weights
-            weights *= np.exp(-alpha * y * predictions)
+            # Update sample weights
+            weights *= np.exp(-model_weight * y * predictions)
             weights /= np.sum(weights)
             
-            # Store the stump and its weight
-            self.stumps.append(stump)
-            self.alphas.append(alpha)
+            # Store the weak learner and its weight
+            self.models.append(weak_learner)
+            self.model_weights.append(model_weight)
     
     def predict(self, X):
         # Initialize predictions
         predictions = np.zeros(X.shape[0])
         
-        # Sum weighted predictions from all stumps
-        for alpha, stump in zip(self.alphas, self.stumps):
-            predictions += alpha * stump.predict(X)
+        for model, weight in zip(self.models, self.model_weights):
+            predictions += weight * model.predict(X)
             
         # Return final prediction (sign of sum)
         return np.sign(predictions)
@@ -59,16 +63,14 @@ X, y = make_classification(n_samples=1000, n_features=2, n_redundant=0,
                           n_informative=2, n_clusters_per_class=1, 
                           random_state=42)
 
-# Convert labels to -1 and 1
+# Convert labels to -1 and 1 for AdaBoost
 y = np.where(y == 0, -1, 1)
 
-# Split data
-split_idx = int(0.8 * len(X))
-X_train, X_test = X[:split_idx], X[split_idx:]
-y_train, y_test = y[:split_idx], y[split_idx:]
+# Split the data
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=42)
 
 # Train AdaBoost
-ada_boost = AdaBoostClassifier(n_estimators=10, learning_rate=1.0)
+ada_boost = AdaBoostClassifier(n_estimators=50, learning_rate=1.0)
 ada_boost.fit(X_train, y_train)
 
 # Make predictions
@@ -78,79 +80,40 @@ y_pred = ada_boost.predict(X_test)
 accuracy = accuracy_score(y_test, y_pred)
 print(f"AdaBoost Accuracy: {accuracy:.4f}")
 
-# Visualize the results
-plt.figure(figsize=(12, 5))
+# Compare with sklearn's AdaBoost
+from sklearn.ensemble import AdaBoostClassifier as SklearnAdaBoost
 
-# Plot training data
-plt.subplot(1, 2, 1)
-plt.scatter(X_train[y_train == -1, 0], X_train[y_train == -1, 1], 
-           c='red', marker='o', label='Class -1')
-plt.scatter(X_train[y_train == 1, 0], X_train[y_train == 1, 1], 
-           c='blue', marker='s', label='Class 1')
-plt.title('Training Data')
-plt.xlabel('Feature 1')
-plt.ylabel('Feature 2')
-plt.legend()
+sklearn_ada = SklearnAdaBoost(n_estimators=50, learning_rate=1.0, random_state=42)
+sklearn_ada.fit(X_train, y_train)
+sklearn_pred = sklearn_ada.predict(X_test)
+sklearn_accuracy = accuracy_score(y_test, sklearn_pred)
 
-# Plot test data with predictions
-plt.subplot(1, 2, 2)
-test_predictions = ada_boost.predict(X_test)
-correct = y_test == test_predictions
-
-plt.scatter(X_test[correct & (y_test == -1), 0], X_test[correct & (y_test == -1), 1], 
-           c='red', marker='o', label='Correct -1')
-plt.scatter(X_test[correct & (y_test == 1), 0], X_test[correct & (y_test == 1), 1], 
-           c='blue', marker='s', label='Correct 1')
-plt.scatter(X_test[~correct & (y_test == -1), 0], X_test[~correct & (y_test == -1), 1], 
-           c='red', marker='x', s=100, label='Incorrect -1')
-plt.scatter(X_test[~correct & (y_test == 1), 0], X_test[~correct & (y_test == 1), 1], 
-           c='blue', marker='x', s=100, label='Incorrect 1')
-plt.title(f'Test Data Predictions\nAccuracy: {accuracy:.4f}')
-plt.xlabel('Feature 1')
-plt.ylabel('Feature 2')
-plt.legend()
-
-plt.tight_layout()
-plt.show()
-
-# Show individual stump weights
-print("\nStump Weights (alphas):")
-for i, alpha in enumerate(ada_boost.alphas):
-    print(f"Stump {i+1}: {alpha:.4f}")
+print(f"Sklearn AdaBoost Accuracy: {sklearn_accuracy:.4f}")
 ```
 
-## Key Components Explained:
+## How it works step by step:
 
-### 1. **AdaBoost Algorithm Steps**:
-- Initialize equal weights for all training samples
-- Train a weak learner (decision stump) on weighted data
-- Calculate error and classifier weight (alpha)
-- Update sample weights based on prediction accuracy
-- Repeat for specified number of estimators
+1. **Initialize weights**: All samples start with equal weights
+2. **Train weak learner**: Train a simple classifier (like decision stump)
+3. **Calculate error**: Measure how well the weak learner performs
+4. **Update weights**: Increase weights of misclassified samples
+5. **Combine learners**: Weight each weak learner based on its performance
+6. **Repeat**: Go back to step 2 for multiple iterations
 
-### 2. **Key Parameters**:
-- `n_estimators`: Number of weak learners to train
-- `learning_rate`: Controls the contribution of each weak learner
+## Key Parameters:
 
-### 3. **Decision Stump**:
-A decision tree with maximum depth 1, making it a simple threshold classifier
+- `n_estimators`: Number of weak learners (default: 50)
+- `learning_rate`: Step size (default: 1.0)
 
-### 4. **Weight Update Rule**:
-Samples that are misclassified get higher weights in next iteration
+## Advantages:
+- Combines weak learners into strong ones
+- Handles both classification and regression
+- Reduces overfitting compared to single decision trees
 
-### 5. **Final Prediction**:
-Weighted sum of all weak learners' predictions
+## Disadvantages:
+- Sensitive to noisy data
+- Can overfit with too many estimators
+- Computationally expensive for large datasets
 
-## Expected Output:
-```
-AdaBoost Accuracy: 0.9200
-
-Stump Weights (alphas):
-Stump 1: 0.7634
-Stump 2: 0.7634
-Stump 3: 0.7634
-...
-```
-
-This implementation demonstrates how AdaBoost combines multiple weak learners to create a strong classifier by focusing on difficult-to-classify samples in each iteration.
+This implementation demonstrates the core concept of AdaBoost by creating a custom class that mimics the sklearn version's functionality.
 

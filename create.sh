@@ -32,7 +32,7 @@ git pull
 
 # Create a new branch
 echo "Creating a new branch."
-git checkout -b "$FOLDER-$LINE"
+git checkout -b "$FOLDER-$CLEAN_LINE"
 
 # Add updated items
 echo "Adding files to staging."
@@ -48,7 +48,7 @@ git push --set-upstream origin $FOLDER-$CLEAN_LINE
 
 # Creating the pull request
 echo "Creating pull request."
-gh pr create --title "$FOLDER_$LINE ready for review" --body "Generating automatically from create.sh."
+gh pr create --title "$FOLDER_$CLEAN_LINE ready for review" --body "Generating automatically from create.sh."
 
 # Switch back to main branch
 echo "Switching back to main."
