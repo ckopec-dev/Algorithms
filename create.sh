@@ -46,6 +46,7 @@ echo "Creating pull request."
 gh pr create --title "$FOLDER_$LINE ready for review" --body "Generating automatically from create.sh."
 
 # Switch back to main branch
+echo "Switching back to main."
 git switch main
 
 # Remove the first line
