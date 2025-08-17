@@ -2,6 +2,9 @@
 
 echo "Processing list."
 
+# Change to working directory
+cd /home/ckopec/code/Algorithms
+
 # Specify the input file
 INPUT_FILE="algos_$1.txt"
 LANGUAGE=$1
