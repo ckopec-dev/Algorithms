@@ -1,3 +1,9 @@
+AdaBoost
+Adaptive Huffman coding
+Aho–Corasick algorithm
+Alpha–beta pruning
+Apriori algorithm
+Arithmetic coding
 Arnoldi iteration
 Artificial bee colony algorithm
 AVL tree balancing algorithm
