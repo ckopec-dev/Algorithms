@@ -3,3 +3,6 @@
 
 # Ignore problems list
 */problems.txt
+
+# Ignore logs directory
+logs/

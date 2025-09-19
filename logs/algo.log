@@ -23,3 +23,26 @@ Fast-forward
 Creating a new branch.
 Switched to a new branch 'Python-Critical_path_method_(CPM)'
 Adding files to staging.
+Making commit.
+[Python-Critical_path_method_(CPM) 25d36f0] Added ./Python/Critical_path_method_(CPM).md
+ 4 files changed, 246 insertions(+), 2 deletions(-)
+ create mode 100644 Python/Critical_path_method_(CPM).md
+ create mode 100644 logs/algo.log
+Pushing commit.
+remote: 
+remote: Create a pull request for 'Python-Critical_path_method_(CPM)' on GitHub by visiting:        
+remote:      https://github.com/ckopec-dev/Algorithms/pull/new/Python-Critical_path_method_(CPM)        
+remote: 
+To https://github.com/ckopec-dev/Algorithms.git
+ * [new branch]      Python-Critical_path_method_(CPM) -> Python-Critical_path_method_(CPM)
+branch 'Python-Critical_path_method_(CPM)' set up to track 'origin/Python-Critical_path_method_(CPM)'.
+Creating pull request.
+Warning: 1 uncommitted change
+https://github.com/ckopec-dev/Algorithms/pull/49
+Switching back to main.
+error: Your local changes to the following files would be overwritten by checkout:
+	logs/algo.log
+Please commit your changes or stash them before you switch branches.
+Aborting
+Pruning list.
+Processing complete.
