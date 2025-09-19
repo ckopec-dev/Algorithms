@@ -1,56 +1,59 @@
 #!/bin/bash
 
-echo "Processing list."
+# Check if exactly two arguments are provided
+if [[ $# -ne 1 ]]; then
+  echo "Usage: $0 <LANGUAGE_NAME>"
+  exit 1 # Exit with a non-zero status to indicate an error
+fi
 
-# Change to working directory
-cd /home/ckopec/code/Algorithms
+echo "SCRIPT: Entering create."
 
-# Specify the input file
-INPUT_FILE="algos_$1.txt"
-LANGUAGE=$1
-FOLDER=$1
+LANGUAGE_NAME=$1
+echo "SCRIPT: Setting variable LANGUAGE_NAME: $LANGUAGE_NAME."
+INPUT_FILE="$LANGUAGE_NAME/problems.txt"
+echo "SCRIPT: Setting variable INPUT_FILE: $INPUT_FILE."
+WORKING_DIR="/mnt/SATA08/intranet/Jobs/Algorithms"
+echo "SCRIPT: Setting variable WORKING_DIR: $WORKING_DIR."
 
-# Get first line from input
-LINE=$(head -n 1 $INPUT_FILE)
-CLEAN_LINE=${LINE// /_}
-echo "SCRIPT: Processing line: $LINE"
+echo "SCRIPT: Changing working directory to $WORKING_DIR."
+cd $WORKING_DIR
 
-# Create the prompt
-PROMPT="Show an example of $LINE algorithm in the $LANGUAGE programming language, in raw markdown."
-echo "SCRIPT: Prompt: $PROMPT"
+ALGO_NAME=$(head -n 1 $INPUT_FILE)
+echo "SCRIPT: Setting variable ALGO_NAME: $ALGO_NAME."
+OUTPUT_FILE="$LANGUAGE_NAME/${ALGO_NAME// /_}.md" # Replaces spaces with underscores
+echo "SCRIPT: Setting variable OUTPUT_FILE: $OUTPUT_FILE."
 
-# Generate ollama result
-OUTPUT_PATH="./$FOLDER/$CLEAN_LINE.md"
+PROMPT="Show an example of $ALGO_NAME algorithm in $LANGUAGE_NAME programming language. Use markdown format."
+echo "SCRIPT: Setting variable PROMPT: $PROMPT"
+
 echo "SCRIPT: Using ollama to generate output."
-ollama run qwen3-coder $PROMPT > $OUTPUT_PATH
+ollama run qwen3-coder $PROMPT > $OUTPUT_FILE
+echo "SCRIPT: Created $OUTPUT_FILE."
 
-# Authenticate to github
 echo "SCRIPT: Authenticating to Github."
 gh auth login --hostname github.com --with-token < ../github_token.txt
 
-# Get fresh pull
 echo "SCRIPT: Pulling latest version."
 git pull
 
-# Create a new branch
-echo "SCRIPT: Creating a new branch."
-git checkout -b "$FOLDER-$CLEAN_LINE"
+$BRANCH_NAME=${LANGUAGE_NAME// /_}-${ALGO_NAME// /_}
+echo "SCRIPT: Setting variable BRANCH_NAME: $BRANCH_NAME."
+echo "SCRIPT: Creating a new branch named $BRANCH_NAME."
+git checkout -b "$BRANCH_NAME"
 
-# Add updated items
 echo "SCRIPT: Adding files to staging."
 git add .
 
-# Make commit
 echo "SCRIPT: Making commit."
-git commit -m "Added $OUTPUT_PATH"
+git commit -m "Added $OUTPUT_FILE"
 
 # Push the commit
 echo "SCRIPT: Pushing commit."
-git push --set-upstream origin $FOLDER-$CLEAN_LINE
+git push --set-upstream origin $BRANCH_NAME
 
 # Creating the pull request
 echo "SCRIPT: Creating pull request."
-gh pr create --title "$FOLDER_$CLEAN_LINE ready for review" --body "Generating automatically from create.sh."
+gh pr create --title "$BRANCH_NAME ready for review" --body "Generated automatically from create.sh."
 
 # Switch back to main branch
 echo "SCRIPT: Switching back to main."
@@ -60,4 +63,4 @@ git switch main
 echo "SCRIPT: Pruning list."
 sed -i '1d' $INPUT_FILE
 
-echo "SCRIPT: Processing complete."
+echo "SCRIPT: Create complete."
