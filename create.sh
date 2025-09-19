@@ -36,7 +36,7 @@ gh auth login --hostname github.com --with-token < ../github_token.txt
 echo "SCRIPT: Pulling latest version."
 git pull
 
-$BRANCH_NAME=${LANGUAGE_NAME// /_}-${ALGO_NAME// /_}
+BRANCH_NAME=${LANGUAGE_NAME// /_}-${ALGO_NAME// /_}
 echo "SCRIPT: Setting variable BRANCH_NAME: $BRANCH_NAME."
 echo "SCRIPT: Creating a new branch named $BRANCH_NAME."
 git checkout -b "$BRANCH_NAME"
