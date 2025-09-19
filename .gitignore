@@ -1,2 +1,5 @@
 # Ignore text files
 *.txt
+
+# Ignore problems list
+*/problems.txt

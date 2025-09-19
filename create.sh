@@ -3,7 +3,7 @@
 echo "Processing list."
 
 # Change to working directory
-cd /home/ckopec/code/Algorithms
+cd /mnt/SATA08/intranet/Jobs/Algorithms
 
 # Specify the input file
 INPUT_FILE="algos_$1.txt"
@@ -51,7 +51,7 @@ git push --set-upstream origin $FOLDER-$CLEAN_LINE
 
 # Creating the pull request
 echo "Creating pull request."
-gh pr create --title "$FOLDER_$CLEAN_LINE ready for review" --body "Generating automatically from create.sh."
+gh pr create --title "$FOLDER_$CLEAN_LINE ready for review" --body "Generated automatically from create.sh."
 
 # Switch back to main branch
 echo "Switching back to main."
