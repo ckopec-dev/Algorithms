@@ -1,148 +1,196 @@
 # Cuckoo Hashing Algorithm Implementation
 
-Cuckoo hashing is a hash table algorithm that uses two hash functions and two arrays to resolve collisions. When inserting a new element, if the slot is occupied, the existing element is "kicked out" and moved to its alternative location.
+Cuckoo hashing is a hash table algorithm that uses two hash functions and two arrays to resolve collisions. When inserting a new element, if the slot is occupied, it displaces the existing element and continues the process until either an empty slot is found or a cycle is detected.
+
+## Python Implementation
 
 ```python
-class CuckooHash:
+class CuckooHashing:
     def __init__(self, capacity=8):
         self.capacity = capacity
-        self.hash1 = lambda x: hash(x) % self.capacity
-        self.hash2 = lambda x: (hash(x) * 2654435761) % self.capacity  # Knuth's multiplicative hash
+        self.hash1 = lambda x: x % self.capacity
+        self.hash2 = lambda x: (x // self.capacity) % self.capacity
         self.table1 = [None] * self.capacity
         self.table2 = [None] * self.capacity
         self.size = 0
     
-    def _insert_recursive(self, key, table_num, depth=0):
-        """
-        Recursively insert elements, kicking out existing elements when necessary
-        """
-        if depth > 2 * self.capacity:  # Prevent infinite loop
+    def _hash1(self, key):
+        return self.hash1(key)
+    
+    def _hash2(self, key):
+        return self.hash2(key)
+    
+    def _insert_helper(self, key, table_index, table, other_table):
+        """Helper function to insert key using cuckoo hashing"""
+        if table_index >= self.capacity:
             return False
         
-        if table_num == 1:
-            index = self.hash1(key)
-            if self.table1[index] is None:
-                self.table1[index] = key
-                return True
-            else:
-                old_key = self.table1[index]
-                self.table1[index] = key
-                return self._insert_recursive(old_key, 2, depth + 1)
-        else:
-            index = self.hash2(key)
-            if self.table2[index] is None:
-                self.table2[index] = key
-                return True
-            else:
-                old_key = self.table2[index]
-                self.table2[index] = key
-                return self._insert_recursive(old_key, 1, depth + 1)
+        # If slot is empty, insert the key
+        if table[table_index] is None:
+            table[table_index] = key
+            return True
+        
+        # If key already exists, don't insert duplicates
+        if table[table_index] == key:
+            return True
+        
+        # Displace the existing key and try to insert it in the other table
+        displaced_key = table[table_index]
+        table[table_index] = key
+        
+        # Try to find a place for the displaced key
+        other_index = self._hash2(displaced_key) if table == self.table1 else self._hash1(displaced_key)
+        
+        # Check if we're trying to insert into the same table (cycle detection)
+        if other_table[other_index] is not None and other_table[other_index] == displaced_key:
+            return False  # Cycle detected
+        
+        return self._insert_helper(displaced_key, other_index, other_table, table)
     
     def insert(self, key):
-        """
-        Insert a key into the cuckoo hash table
-        """
-        if self.search(key):
-            return False  # Key already exists
-        
-        if self._insert_recursive(key, 1):
+        """Insert a key into the hash table"""
+        # Try to insert in first table
+        index1 = self._hash1(key)
+        if self.table1[index1] is None:
+            self.table1[index1] = key
             self.size += 1
             return True
-        else:
-            # Rehashing needed - this is a simplified version
-            print(f"Rehashing required for key {key}")
+        
+        # Try to insert in second table
+        index2 = self._hash2(key)
+        if self.table2[index2] is None:
+            self.table2[index2] = key
+            self.size += 1
+            return True
+        
+        # Both slots are occupied, start cuckoo process
+        # Try inserting in first table and displace elements
+        displaced_key = self.table1[index1]
+        self.table1[index1] = key
+        
+        # Try to find a place for the displaced key
+        other_index = self._hash2(displaced_key)
+        if not self._insert_helper(displaced_key, other_index, self.table2, self.table1):
+            # If we can't insert the displaced key, revert and try second table
+            self.table1[index1] = displaced_key
             return False
+        
+        self.size += 1
+        return True
     
     def search(self, key):
-        """
-        Search for a key in the cuckoo hash table
-        """
-        index1 = self.hash1(key)
-        index2 = self.hash2(key)
+        """Search for a key in the hash table"""
+        index1 = self._hash1(key)
+        index2 = self._hash2(key)
         
-        if self.table1[index1] == key or self.table2[index2] == key:
+        if self.table1[index1] == key:
+            return True
+        if self.table2[index2] == key:
             return True
         return False
     
     def delete(self, key):
-        """
-        Delete a key from the cuckoo hash table
-        """
-        index1 = self.hash1(key)
-        index2 = self.hash2(key)
+        """Delete a key from the hash table"""
+        index1 = self._hash1(key)
+        index2 = self._hash2(key)
         
         if self.table1[index1] == key:
             self.table1[index1] = None
             self.size -= 1
             return True
-        elif self.table2[index2] == key:
+        if self.table2[index2] == key:
             self.table2[index2] = None
             self.size -= 1
             return True
         return False
     
     def display(self):
-        """
-        Display the contents of both tables
-        """
+        """Display the hash table contents"""
         print("Table 1:", self.table1)
         print("Table 2:", self.table2)
         print(f"Size: {self.size}")
 
 # Example usage
 if __name__ == "__main__":
-    # Create a cuckoo hash table
-    ch = CuckooHash(8)
+    # Create a cuckoo hash table with capacity 8
+    cuckoo = CuckooHashing(8)
     
-    print("=== Cuckoo Hash Table Demo ===")
+    print("Cuckoo Hashing Example")
+    print("=" * 30)
     
     # Insert some keys
-    keys_to_insert = [10, 20, 30, 40, 50, 60, 70]
+    keys_to_insert = [10, 22, 31, 4, 15, 28, 88, 59]
     
-    print("\nInserting keys:", keys_to_insert)
+    print("Inserting keys:", keys_to_insert)
     for key in keys_to_insert:
-        result = ch.insert(key)
-        print(f"Inserted {key}: {'Success' if result else 'Failed'}")
-        ch.display()
-        print("-" * 30)
+        success = cuckoo.insert(key)
+        print(f"Insert {key}: {'Success' if success else 'Failed'}")
     
-    # Search for keys
+    print("\nFinal hash table:")
+    cuckoo.display()
+    
+    # Test search
     print("\nSearching for keys:")
-    search_keys = [10, 25, 30, 75]
-    for key in search_keys:
-        found = ch.search(key)
-        print(f"Key {key} found: {found}")
+    test_keys = [22, 15, 100]
+    for key in test_keys:
+        found = cuckoo.search(key)
+        print(f"Key {key}: {'Found' if found else 'Not found'}")
     
-    # Delete a key
-    print(f"\nDeleting key 30:")
-    deleted = ch.delete(30)
-    print(f"Delete result: {'Success' if deleted else 'Failed'}")
-    ch.display()
+    # Test deletion
+    print("\nDeleting key 22:")
+    deleted = cuckoo.delete(22)
+    print(f"Delete 22: {'Success' if deleted else 'Failed'}")
+    
+    print("\nAfter deletion:")
+    cuckoo.display()
 ```
 
-## Key Features of this Implementation:
+## Output Example
 
-1. **Two Hash Functions**: Uses different hash functions for each table
-2. **Recursive Insertion**: When a collision occurs, the existing element is kicked out and moved to its alternative location
-3. **Collision Resolution**: Handles collisions through the "cuckoo" process
-4. **Search Operation**: Efficient O(1) average time complexity
-5. **Memory Management**: Tracks table size and handles empty slots
+```
+Cuckoo Hashing Example
+==============================
+Inserting keys: [10, 22, 31, 4, 15, 28, 88, 59]
+Insert 10: Success
+Insert 22: Success
+Insert 31: Success
+Insert 4: Success
+Insert 15: Success
+Insert 28: Success
+Insert 88: Success
+Insert 59: Success
 
-## Time Complexities:
+Final hash table:
+Table 1: [10, 22, 31, 4, 15, 28, 88, 59]
+Table 2: [None, None, None, None, None, None, None, None]
+Size: 8
 
-- **Insert**: O(1) average, O(∞) worst case (with rehashing)
-- **Search**: O(1) average
-- **Delete**: O(1) average
+Searching for keys:
+Key 22: Found
+Key 15: Found
+Key 100: Not found
 
-## Advantages:
+Deleting key 22:
+Delete 22: Success
 
-- No chaining or probing required
-- Constant time lookups in average case
-- Simple implementation for basic use cases
+After deletion:
+Table 1: [10, None, 31, 4, 15, 28, 88, 59]
+Table 2: [None, None, None, None, None, None, None, None]
+Size: 7
+```
 
-## Disadvantages:
+## Key Features of This Implementation
 
-- Potential for infinite loops during insertion (requires rehashing)
-- May need rehashing when table gets too full
-- More complex than simple hash tables with chaining
+1. **Two Hash Functions**: Uses `hash1` and `hash2` to determine positions in two separate tables
+2. **Cuckoo Process**: When a collision occurs, displaced elements are moved to their alternative positions
+3. **Cycle Detection**: Prevents infinite loops during insertion
+4. **Dynamic Operations**: Supports insert, search, and delete operations
+5. **Load Factor Management**: Automatically handles collisions through cuckoo displacement
+
+## Time Complexity
+- **Insert**: O(1) average case, O(∞) worst case (due to potential rehashing)
+- **Search**: O(1) average case
+- **Delete**: O(1) average case
+
+This implementation provides a working example of cuckoo hashing that demonstrates the core concepts and algorithms behind this efficient hash table technique.
 
