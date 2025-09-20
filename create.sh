@@ -23,7 +23,9 @@ echo "SCRIPT: Setting variable ALGO_NAME: $ALGO_NAME."
 OUTPUT_FILE="$LANGUAGE_NAME/${ALGO_NAME// /_}.md" # Replaces spaces with underscores
 echo "SCRIPT: Setting variable OUTPUT_FILE: $OUTPUT_FILE."
 
-PROMPT="Show an example of $ALGO_NAME algorithm in $LANGUAGE_NAME programming language. Use markdown format."
+LANGUAGE_FOR_PROMPT="${LANGUAGE_NAME/LWC/Lightning Web Components}"
+echo "SCRIPT: Setting variable LANGUAGE_FOR_PROMPT: $LANGUAGE_FOR_PROMPT"
+PROMPT="Show an example of $ALGO_NAME algorithm in $LANGUAGE_FOR_PROMPT programming language. Use markdown format."
 echo "SCRIPT: Setting variable PROMPT: $PROMPT"
 
 echo "SCRIPT: Using ollama to generate output."
