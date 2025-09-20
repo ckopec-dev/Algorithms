@@ -1,21 +1,7 @@
 * Python
 * C#
-Java
-JavaScript
+C
 C++
-PHP
-Ruby
-Swift
-Go
-Rust
-Kotlin
-SQL
-HTML
-CSS
-TypeScript
-Perl
-R
-MATLAB
-Julia
-Dart
 Assembly
+Perl
+
