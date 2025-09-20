@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Check if exactly two arguments are provided
+# Check if correct number of arguments are provided
 if [[ $# -ne 1 ]]; then
   echo "Usage: $0 <LANGUAGE_NAME>"
   exit 1 # Exit with a non-zero status to indicate an error
