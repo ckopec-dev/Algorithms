@@ -1,8 +1,8 @@
-Python
+* Python
+* C#
 Java
 JavaScript
 C++
-C#
 PHP
 Ruby
 Swift
