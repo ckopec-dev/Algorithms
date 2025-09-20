@@ -1,7 +1,8 @@
-* Python
-* C#
+Python
+C#
 C
 C++
 Assembly
 Perl
+LWC
 
