@@ -1,285 +1,198 @@
 # Jump Search Algorithm in Lightning Web Component
 
-Here's a complete example of implementing the Jump Search algorithm in a Lightning Web Component:
+```javascript
+// jumpSearch.js
+import { LightningElement } from 'lwc';
 
-## HTML Template (jumpSearch.html)
+export default class JumpSearch extends LightningElement {
+    inputArray = [1, 3, 5, 7, 9, 11, 13, 15, 17, 19];
+    targetValue = 13;
+    result = '';
+    searchSteps = [];
+
+    handleSearch() {
+        const array = this.inputArray;
+        const target = parseInt(this.targetValue);
+        
+        if (isNaN(target)) {
+            this.result = 'Please enter a valid number';
+            return;
+        }
+
+        this.searchSteps = [];
+        const index = this.jumpSearch(array, target);
+        
+        if (index !== -1) {
+            this.result = `Element found at index: ${index}`;
+        } else {
+            this.result = 'Element not found in array';
+        }
+    }
+
+    jumpSearch(array, target) {
+        const n = array.length;
+        let step = Math.floor(Math.sqrt(n));
+        let prev = 0;
+
+        // Add step to search steps
+        this.searchSteps.push({
+            message: `Starting jump search with step size: ${step}`,
+            array: [...array],
+            currentStep: 'start'
+        });
+
+        // Jump through the array
+        while (array[Math.min(step, n) - 1] < target) {
+            prev = step;
+            step += Math.floor(Math.sqrt(n));
+            
+            this.searchSteps.push({
+                message: `Jumping from index ${prev} to index ${step}`,
+                array: [...array],
+                currentStep: 'jump',
+                prevIndex: prev,
+                currentIndex: step
+            });
+
+            if (prev >= n) {
+                return -1;
+            }
+        }
+
+        // Linear search in the block
+        this.searchSteps.push({
+            message: `Performing linear search from index ${prev} to ${Math.min(step, n) - 1}`,
+            array: [...array],
+            currentStep: 'linear_search',
+            startIndex: prev,
+            endIndex: Math.min(step, n) - 1
+        });
+
+        for (let i = prev; i < Math.min(step, n); i++) {
+            this.searchSteps.push({
+                message: `Checking element at index ${i}`,
+                array: [...array],
+                currentStep: 'check',
+                currentIndex: i
+            });
+
+            if (array[i] === target) {
+                return i;
+            }
+        }
+
+        return -1;
+    }
+
+    handleInputChange(event) {
+        const { name, value } = event.target;
+        if (name === 'target') {
+            this.targetValue = value;
+        }
+    }
+
+    get formattedArray() {
+        return this.inputArray.join(', ');
+    }
+
+    get searchStepsHtml() {
+        return this.searchSteps.map((step, index) => `
+            <div class="slds-p-around_small slds-border_bottom">
+                <p><strong>Step ${index + 1}:</strong> ${step.message}</p>
+                ${step.currentStep === 'jump' ? 
+                    `<p>Jumping from index ${step.prevIndex} to index ${step.currentIndex}</p>` : ''}
+                ${step.currentStep === 'linear_search' ? 
+                    `<p>Searching in range [${step.startIndex}, ${step.endIndex}]</p>` : ''}
+                ${step.currentStep === 'check' ? 
+                    `<p>Checking element: ${step.array[step.currentIndex]}</p>` : ''}
+            </div>
+        `).join('');
+    }
+}
+```
+
 ```html
+<!-- jumpSearch.html -->
 <template>
-    <div class="slds-box slds-box_small slds-theme_default">
+    <div class="slds-box slds-p-around_medium">
         <h2>Jump Search Algorithm</h2>
         
         <div class="slds-form-element">
-            <label class="slds-form-element__label">Enter array elements (comma separated)</label>
-            <div class="slds-form-element__control">
-                <input 
-                    type="text" 
-                    class="slds-input"
-                    value={inputArray}
-                    onchange={handleArrayChange}
-                    placeholder="e.g., 1,3,5,7,9,11,13,15,17,19"
-                />
-            </div>
+            <label class="slds-form-element__label">Input Array</label>
+            <p class="slds-form-element__help">{formattedArray}</p>
         </div>
 
-        <div class="slds-form-element">
-            <label class="slds-form-element__label">Enter search element</label>
-            <div class="slds-form-element__control">
-                <input 
-                    type="number" 
-                    class="slds-input"
-                    value={searchElement}
-                    onchange={handleSearchChange}
-                    placeholder="Enter number to search"
-                />
-            </div>
+        <div class="slds-form-element slds-m-top_medium">
+            <label class="slds-form-element__label">Target Value</label>
+            <input 
+                type="number" 
+                name="target"
+                value={targetValue}
+                onchange={handleInputChange}
+                class="slds-input"
+            />
         </div>
 
-        <button class="slds-button slds-button_brand" onclick={performJumpSearch}>
-            Perform Jump Search
+        <button 
+            onclick={handleSearch}
+            class="slds-button slds-button_brand slds-m-top_medium"
+        >
+            Search
         </button>
 
-        <template if:true={result}>
-            <div class="slds-alert slds-alert_success slds-m-top_medium">
-                <span class="slds-alert_icon slds-icon slds-icon_check slds-icon_x-small">
-                    <svg class="slds-icon slds-icon-text-success" aria-hidden="true">
-                        <use href="/assets/icons/utility-sprite/svg/symbols.svg#check"></use>
-                    </svg>
-                </span>
-                <div class="slds-alert__body">
-                    <p>Element found at index: {result}</p>
-                </div>
-            </div>
-        </template>
+        <div class="slds-m-top_medium">
+            <p><strong>Result:</strong> {result}</p>
+        </div>
 
-        <template if:true={error}>
-            <div class="slds-alert slds-alert_error slds-m-top_medium">
-                <span class="slds-alert_icon slds-icon slds-icon_error slds-icon_x-small">
-                    <svg class="slds-icon slds-icon-text-error" aria-hidden="true">
-                        <use href="/assets/icons/utility-sprite/svg/symbols.svg#error"></use>
-                    </svg>
-                </span>
-                <div class="slds-alert__body">
-                    <p>{error}</p>
+        <div class="slds-m-top_medium">
+            <h3>Search Steps</h3>
+            <template if:true={searchSteps.length}>
+                <div class="slds-card">
+                    <div class="slds-card__body">
+                        <template for:each={searchSteps} for:item="step" for:index="index">
+                            <div key={index} class="slds-p-around_small slds-border_bottom">
+                                <p><strong>Step {index + 1}:</strong> {step.message}</p>
+                                <template if:true={step.prevIndex}>
+                                    <p>Jumping from index {step.prevIndex} to index {step.currentIndex}</p>
+                                </template>
+                                <template if:true={step.startIndex}>
+                                    <p>Searching in range [{step.startIndex}, {step.endIndex}]</p>
+                                </template>
+                                <template if:true={step.currentIndex}>
+                                    <p>Checking element: {step.array[step.currentIndex]}</p>
+                                </template>
+                            </div>
+                        </template>
+                    </div>
                 </div>
-            </div>
-        </template>
-
-        <template if:true={searchSteps}>
-            <div class="slds-box slds-box_small slds-theme_alert-texture slds-m-top_medium">
-                <h3>Search Steps:</h3>
-                <ul class="slds-list_dotted">
-                    <template for:each={searchSteps} for:item="step">
-                        <li key={step.index}>{step.description}</li>
-                    </template>
-                </ul>
-            </div>
-        </template>
+            </template>
+        </div>
     </div>
 </template>
 ```
 
-## JavaScript Controller (jumpSearch.js)
-```javascript
-import { LightningElement, track } from 'lwc';
-
-export default class JumpSearch extends LightningElement {
-    @track inputArray = '';
-    @track searchElement = '';
-    @track result = null;
-    @track error = null;
-    @track searchSteps = [];
-
-    // Handle array input change
-    handleArrayChange(event) {
-        this.inputArray = event.target.value;
-        this.clearResults();
-    }
-
-    // Handle search element change
-    handleSearchChange(event) {
-        this.searchElement = event.target.value;
-        this.clearResults();
-    }
-
-    // Clear previous results
-    clearResults() {
-        this.result = null;
-        this.error = null;
-        this.searchSteps = [];
-    }
-
-    // Perform jump search algorithm
-    performJumpSearch() {
-        try {
-            // Parse input array
-            if (!this.inputArray.trim()) {
-                throw new Error('Please enter array elements');
-            }
-
-            const array = this.parseArray(this.inputArray);
-            
-            // Validate array is sorted
-            if (!this.isSorted(array)) {
-                throw new Error('Array must be sorted for jump search algorithm');
-            }
-
-            // Parse search element
-            if (!this.searchElement && this.searchElement !== 0) {
-                throw new Error('Please enter a search element');
-            }
-
-            const searchValue = parseInt(this.searchElement);
-            
-            // Perform jump search
-            const result = this.jumpSearch(array, searchValue);
-            
-            this.result = result.index;
-            this.searchSteps = result.steps;
-
-        } catch (error) {
-            this.error = error.message;
-        }
-    }
-
-    // Parse comma-separated string to array
-    parseArray(inputString) {
-        return inputString.split(',').map(item => {
-            const parsed = parseInt(item.trim());
-            if (isNaN(parsed)) {
-                throw new Error('Invalid number in array');
-            }
-            return parsed;
-        });
-    }
-
-    // Check if array is sorted in ascending order
-    isSorted(array) {
-        for (let i = 1; i < array.length; i++) {
-            if (array[i] < array[i - 1]) {
-                return false;
-            }
-        }
-        return true;
-    }
-
-    // Jump Search Algorithm Implementation
-    jumpSearch(array, searchValue) {
-        const n = array.length;
-        let steps = [];
-        
-        // Handle edge cases
-        if (n === 0) {
-            return { index: -1, steps: [{ index: -1, description: 'Array is empty' }] };
-        }
-
-        // Calculate block size (jump size)
-        const jumpSize = Math.floor(Math.sqrt(n));
-        steps.push({ 
-            index: -1, 
-            description: `Jump size calculated as √${n} ≈ ${jumpSize}` 
-        });
-
-        let previousBlock = 0;
-        let currentBlock = jumpSize;
-
-        // Jump through blocks
-        steps.push({ 
-            index: -1, 
-            description: `Starting from index 0, jumping by ${jumpSize} positions` 
-        });
-
-        while (currentBlock < n && array[currentBlock] < searchValue) {
-            previousBlock = currentBlock;
-            currentBlock += jumpSize;
-            steps.push({ 
-                index: currentBlock, 
-                description: `Jumping to index ${currentBlock}` 
-            });
-        }
-
-        // Linear search in the block
-        steps.push({ 
-            index: -1, 
-            description: `Searching linearly in block [${previousBlock}, ${Math.min(currentBlock, n) - 1}]` 
-        });
-
-        for (let i = previousBlock; i < Math.min(currentBlock, n); i++) {
-            steps.push({ 
-                index: i, 
-                description: `Checking element at index ${i}: ${array[i]}` 
-            });
-            
-            if (array[i] === searchValue) {
-                return { 
-                    index: i, 
-                    steps: steps 
-                };
-            }
-        }
-
-        // Element not found
-        steps.push({ 
-            index: -1, 
-            description: `Element ${searchValue} not found in array` 
-        });
-        
-        return { 
-            index: -1, 
-            steps: steps 
-        };
-    }
-}
-```
-
-## CSS Styles (jumpSearch.css)
 ```css
-.slds-box {
-    background-color: #ffffff;
-    border: 1px solid #e5e5e5;
-    border-radius: 0.25rem;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    padding: 1rem;
-}
-
-.slds-form-element {
-    margin-bottom: 1rem;
-}
-
-.slds-input {
-    width: 100%;
-    padding: 0.5rem;
-    border: 1px solid #e5e5e5;
-    border-radius: 0.25rem;
-    font-size: 0.875rem;
-}
-
-.slds-button {
-    margin-top: 1rem;
-}
-
-.slds-alert {
-    margin-top: 1rem;
-}
-
-.slds-list_dotted {
-    padding-left: 1rem;
+/* jumpSearch.css */
+.slds-card__body {
+    max-height: 400px;
+    overflow-y: auto;
 }
 ```
 
-## How it works:
+## How Jump Search Works
 
-1. **Input**: User enters a comma-separated sorted array and a search element
-2. **Algorithm**: 
-   - Calculates jump size as √n (square root of array length)
-   - Jumps through blocks until finding the correct block
-   - Performs linear search within that block
-3. **Output**: Shows the index where element is found or indicates not found
-4. **Visualization**: Displays step-by-step execution of the algorithm
+1. **Calculate Step Size**: Take square root of array length as step size
+2. **Jump Through Array**: Jump through the array in steps
+3. **Find Block**: Identify the block where target might be
+4. **Linear Search**: Perform linear search within that block
 
-## Example Usage:
-- Input Array: `1,3,5,7,9,11,13,15,17,19`
-- Search Element: `11`
-- Output: Element found at index: `5`
+## Time Complexity
+- **Best Case**: O(1)
+- **Average Case**: O(√n)
+- **Worst Case**: O(√n)
 
-This implementation demonstrates the jump search algorithm with clear visualization of each step in the Lightning Web Component framework.
+## Space Complexity
+- O(1) - Only uses a constant amount of extra space
+
+This implementation shows the step-by-step process of jump search with visual feedback in the Lightning Web Component.
 
