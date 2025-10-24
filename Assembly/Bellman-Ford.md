@@ -237,19 +237,22 @@ normal_exit:
     syscall
 ```
 
-## Key Features of this Implementation:
+## Key Features of this Implementation
 
 ### 1. **Data Structures**
+
 - `edges`: Array storing edges as [src, dst, weight]
 - `distances`: Array storing shortest distances from source
 - `num_edges` and `num_vertices`: Graph parameters
 
 ### 2. **Algorithm Steps**
+
 1. **Initialization**: Set all distances to infinity except source (0)
 2. **Relaxation**: For V-1 iterations, relax all edges
 3. **Negative Cycle Detection**: One final iteration to detect negative cycles
 
 ### 3. **Assembly-Specific Features**
+
 - Uses x86-64 registers efficiently
 - Proper stack management with `push`/`pop`
 - Memory addressing for arrays and structures
@@ -257,6 +260,7 @@ normal_exit:
 - Function calling convention
 
 ### 4. **Key Instructions Used**
+
 - `mov`: Data movement
 - `add`: Arithmetic operations
 - `cmp`: Comparison operations
@@ -265,4 +269,3 @@ normal_exit:
 - `call/ret`: Function calls
 
 This implementation demonstrates how the Bellman-Ford algorithm can be translated into low-level assembly code while maintaining the same logical structure and functionality as a high-level language version.
-

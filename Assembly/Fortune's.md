@@ -200,23 +200,24 @@ example_usage:
 .size fortune_algorithm, .-fortune_algorithm
 ```
 
-## Key Features of this Assembly Implementation:
+## Key Features of this Assembly Implementation
 
 1. **Memory Management**: Uses stack space for temporary variables and structures
 2. **Data Structures**: Defines point and event structures in assembly
-3. **Algorithm Components**:
+3. **Algorithm Components**
+
    - Site event processing
    - Circle event handling (simplified)
    - Beach line management
    - Voronoi edge computation
 
-4. **Functionality**:
+4. **Functionality**
    - Processes input points
    - Maintains sweep line position
    - Handles parabolic arcs
    - Generates Voronoi diagram output
 
-## Notes:
+## Notes
 
 - This is a simplified representation showing the structure and key concepts
 - A full implementation would require complex data structures like:
@@ -227,4 +228,3 @@ example_usage:
 - The actual implementation would be much more complex due to the geometric computations involved
 
 This example demonstrates how Fortune's algorithm concepts can be translated into assembly language, though a production version would require extensive optimization and error handling.
-

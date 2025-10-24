@@ -191,17 +191,20 @@ _start:
     syscall
 ```
 
-## Key Components of the Implementation:
+## Key Components of the Implementation
 
 ### 1. **Modular Exponentiation Function**
+
 - Implements binary exponentiation for efficient modular exponentiation
 - Uses the standard algorithm with bit manipulation
 
 ### 2. **ElGamal Encryption Process**
+
 - **C1 = g^k mod p** (first component)
 - **C2 = (message × public_key^k) mod p** (second component)
 
 ### 3. **Key Parameters**
+
 - Prime number `p` = 23
 - Generator `g` = 5
 - Private key = 6
@@ -210,13 +213,15 @@ _start:
 - Random value `k` = 7
 
 ### 4. **Security Considerations**
+
 - In real applications, the random value `k` must be chosen securely
 - The private key should never be exposed
 - Modular arithmetic is crucial for security
 
-## Usage Notes:
+## Usage Notes
 
 This is a simplified demonstration implementation. In practice, you would need:
+
 1. Proper error handling
 2. Larger prime numbers (at least 1024 bits)
 3. Secure random number generation
@@ -224,4 +229,3 @@ This is a simplified demonstration implementation. In practice, you would need:
 5. More robust modular inverse calculation
 
 The algorithm demonstrates the mathematical principles behind ElGamal encryption while showing how it translates to assembly code structure.
-

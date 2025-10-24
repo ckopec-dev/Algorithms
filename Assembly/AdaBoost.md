@@ -186,9 +186,10 @@ _start:
     syscall
 ```
 
-## Key Components Explained:
+## Key Components Explained
 
 ### 1. **Data Structures**
+
 - `features`: Sample feature data
 - `labels`: True class labels (+1 or -1)
 - `weights`: Sample weights (initialized equally)
@@ -201,12 +202,14 @@ _start:
 **`train_weak_learner`**: Simplified function that would find the best threshold for splitting in a decision stump.
 
 **`ada_boost_train`**: Main AdaBoost training loop that:
+
 - Initializes weights
 - Trains multiple weak learners
 - Calculates learner weights (alpha)
 - Updates sample weights based on performance
 
 ### 3. **Algorithm Flow**
+
 1. Initialize all sample weights equally
 2. For each boosting round:
    - Train a weak learner on current weighted data
@@ -216,10 +219,10 @@ _start:
 3. Combine all learners with their respective weights
 
 ### 4. **Important Notes**
+
 - This is a simplified implementation showing the core concepts
 - Real AdaBoost would include more sophisticated weak learners (like decision stumps)
 - Weight updates would use the formula: `w_i = w_i * exp(alpha * y_i * h(x_i))`
 - The actual implementation would require proper floating-point handling and more robust error checking
 
 This assembly code demonstrates how the mathematical concepts of AdaBoost can be translated into low-level machine instructions, though in practice such implementations are typically written in higher-level languages for maintainability.
-

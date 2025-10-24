@@ -151,32 +151,37 @@ example_usage:
     ret
 ```
 
-## Key Features of this Implementation:
+## Key Features of this Implementation
 
 ### 1. **Data Structures**
+
 - `parent` array: Stores parent pointers for each element
 - `rank` array: Stores rank (depth) information for union by rank optimization
 
 ### 2. **Core Functions**
 
-**`union_find_init`**: 
+**`union_find_init`**
+
 - Initializes all elements to be their own parent
 - Sets all ranks to 0
 
-**`find_set`**: 
+**`find_set`**
+
 - Finds the root of the set containing element x
 - Implements path compression for optimization
 
-**`union_sets`**: 
+**`union_sets`**
+
 - Unions two sets using union by rank
 - Returns 1 if union was performed, 0 if elements were already in same set
 
 ### 3. **Optimizations Used**
+
 - **Path Compression**: Makes future queries faster by flattening the tree
 - **Union by Rank**: Keeps trees balanced by always attaching smaller tree under root of larger tree
 
 ### 4. **Usage Example**
+
 The example shows initializing 10 elements, then performing several union operations, demonstrating the algorithm's functionality.
 
 This implementation provides O(α(n)) amortized time complexity for both find and union operations, where α is the inverse Ackermann function, making it extremely efficient for practical applications.
-

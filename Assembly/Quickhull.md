@@ -197,9 +197,10 @@ _start:
     syscall
 ```
 
-## Key Features of This Implementation:
+## Key Features of This Implementation
 
 ### 1. **Data Structures**
+
 - Points stored as x,y coordinates (double precision)
 - Hull buffer for storing convex hull points
 - Proper memory alignment for assembly operations
@@ -207,18 +208,21 @@ _start:
 ### 2. **Core Algorithm Components**
 
 #### **find_extremes Function**
+
 ```assembly
 ; Finds leftmost and rightmost points in the dataset
 ; Returns indices via RAX (left) and RDX (right)
 ```
 
 #### **add_to_hull Function**
+
 ```assembly
 ; Copies a point from original array to hull buffer
 ; Maintains hull_index counter
 ```
 
 #### **quickhull_rec Function**
+
 ```assembly
 ; Recursive core of the algorithm
 ; Processes subproblems for upper and lower hulls
@@ -226,16 +230,16 @@ _start:
 
 ### 3. **Assembly-Specific Features**
 
-- **Register Usage**: 
+- **Register Usage**
   - RDI, RSI for parameters
   - RAX, RDX for return values
   - R12-R14 for local variables
 
-- **Memory Operations**: 
+- **Memory Operations**
   - Point array indexing with proper offset calculations
   - Buffer management for hull storage
 
-- **Control Flow**: 
+- **Control Flow**
   - Loop structures using conditional jumps
   - Recursive function calls with proper stack management
 
@@ -243,7 +247,7 @@ _start:
 
 1. **Find Extremes**: Locate leftmost and rightmost points
 2. **Initialize Hull**: Add extreme points to hull buffer
-3. **Recursive Processing**: 
+3. **Recursive Processing**
    - Find farthest point from each line segment
    - Recursively process subregions
 4. **Result Assembly**: Combine all hull points

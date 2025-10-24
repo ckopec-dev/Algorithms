@@ -170,23 +170,23 @@ begin
 end Edmonds_Karp;
 ```
 
-## How it works:
+## How it works
 
 1. **Graph Representation**: Uses adjacency matrices to represent the flow network
 2. **BFS Search**: Finds augmenting paths from source to sink using breadth-first search
 3. **Path Augmentation**: For each path found, determines the minimum capacity and updates residual graph
 4. **Loop Until No Path**: Continues until no more augmenting paths exist
 
-## Key Features:
+## Key Features
 
 - **BFS-based**: Uses breadth-first search to find shortest augmenting paths
 - **Residual Graph**: Maintains both forward and backward edges in residual graph
 - **Path Flow Calculation**: Computes minimum capacity along each path
 - **Efficient Updates**: Updates residual capacities after each augmentation
 
-## Time Complexity:
+## Time Complexity
+
 - O(VE²) where V is number of vertices and E is number of edges
 - This implementation uses BFS to find augmenting paths, making it efficient for most practical cases
 
 The algorithm finds the maximum flow from source to sink in a flow network with given edge capacities.
-

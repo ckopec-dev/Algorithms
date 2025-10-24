@@ -266,7 +266,7 @@ print_tree:
 
 ```
 
-## Key Features of this Implementation:
+## Key Features of this Implementation
 
 1. **Tree Structure**: Uses an array-based representation for the Huffman tree
 2. **Dynamic Updates**: Updates tree structure as new symbols are encountered
@@ -274,14 +274,14 @@ print_tree:
 4. **Memory Management**: Handles node allocation and deallocation
 5. **Encoding/Decoding**: Basic framework for both encoding and decoding operations
 
-## Algorithm Steps Implemented:
+## Algorithm Steps Implemented
 
 1. **Node Initialization**: Creates new nodes as symbols are encountered
 2. **Frequency Update**: Updates symbol frequencies in real-time
 3. **Tree Restructuring**: Maintains proper Huffman tree properties
 4. **Code Generation**: Generates variable-length codes based on frequency
 
-## Notes:
+## Notes
 
 - This is a simplified implementation for demonstration purposes
 - A full implementation would include proper bit-level encoding/decoding
@@ -290,4 +290,3 @@ print_tree:
 - System calls for I/O operations would be needed for practical use
 
 The code demonstrates the core concepts of adaptive Huffman coding while showing how it can be implemented in assembly language.
-

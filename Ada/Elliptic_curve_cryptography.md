@@ -171,4 +171,3 @@ gnatmake ecc_example.adb
 ```
 
 This example provides the foundational structure for implementing ECC in Ada, which can be extended for full cryptographic applications.
-

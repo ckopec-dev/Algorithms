@@ -214,27 +214,27 @@ _start:
 
 ```
 
-## Key Features of this Implementation:
+## Key Features of this Implementation
 
 1. **Distance Calculation**: Uses Euclidean distance formula to calculate distances between customers and depot
 2. **Savings Matrix**: Computes savings values for all customer pairs using the Clarke-Wright formula
 3. **Greedy Route Building**: Implements a basic greedy algorithm to form vehicle routes
-4. **Data Structures**: 
+4. **Data Structures**
+
    - Customer coordinates stored in memory
    - Distance and savings matrices
    - Route assignment tracking
 
-## Algorithm Steps:
+## Algorithm Steps
 
 1. **Distance Calculation**: Compute distances between all customers and the depot
 2. **Savings Computation**: Calculate savings for each customer pair using: `S(i,j) = C(0,i) + C(0,j) - C(i,j)`
 3. **Sorting**: Sort savings in descending order (simplified in this example)
 4. **Route Construction**: Greedily build routes by merging customers with highest savings
 
-## Notes:
+## Notes
 
 - This is a simplified implementation for educational purposes
 - In practice, you'd need more sophisticated sorting and route merging logic
 - Memory management and error handling would be required for production use
 - The algorithm assumes a single depot at origin (0,0)
-
